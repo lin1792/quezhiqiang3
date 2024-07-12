@@ -194,13 +194,10 @@ const handleFileUpload = async (event: Event) => {
 
 //导出图片
 const saveAsImg = () => {
-  let targetDom: any = document.getElementById("exportAll"); //原本需要截图的div
+  let element: any = document.getElementById("exportAll"); //原本需要截图的div
   // 转换成canvas
-  html2canvas(targetDom, {
-    allowTaint: true,
-    taintTest: false
-  } as any).then(function (canvas:any) {
-    let imgData = canvas.toDataURL("image/png", 1.0);
+  html2canvas(element).then((canvas:any) =>{
+    let imgData = canvas.toDataURL("image/png");
     dataImg.value=imgData
     let save_link: any = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
   save_link.href = imgData.replace("image/png", "image/octet-stream");
