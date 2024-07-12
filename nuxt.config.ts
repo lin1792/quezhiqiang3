@@ -3,12 +3,20 @@ export default defineNuxtConfig({
   // Nuxt 4 directory structure and features
   // https://nuxt.com/docs/getting-started/upgrade#testing-nuxt-4
   future: { compatibilityVersion: 4 },
+<<<<<<< HEAD
 
+=======
+  // devServer: {
+  //   host: '0.0.0.0', // 或指定特定的 IP 地址，例如 '192.168.1.100'
+  //   port: 3000 // 你想要使用的端口
+  // },
+>>>>>>> 7126aa234fbeb7d9bc525ee1f01dec4a81d16eef
   // Nuxt Modules
   // https://nuxt.com/modules
   modules: [
     '@nuxthub/core',
-    '@nuxt/eslint'
+    '@nuxt/eslint',
+    '@nuxtjs/tailwindcss',
   ],
 
   hub: {
@@ -29,4 +37,8 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   compatibilityDate: '2024-07-09',
+<<<<<<< HEAD
 })
+=======
+})
+>>>>>>> 7126aa234fbeb7d9bc525ee1f01dec4a81d16eef
