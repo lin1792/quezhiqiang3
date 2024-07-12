@@ -1,10 +1,41 @@
 <template>
   <div class="home card">
+    <div class="bts">
+      <div >
+        <button @click="saveAsImg">生成PNG图片</button>
+      </div>
+      <div>
+        <button  @click="saveAsPdf">生成PDF</button>
+      </div>
+      <div>
+        <button @click="saveAsTiff">生成Tiff</button>
+      </div>
+      <div>
+        <input type="file" @change="handleFileUpload" accept=".xlsx, .xls" />
+
+      </div>
+      <div>
+        <span>自定义区间点:</span>
+        <input type="file" id="fileInput" accept="image/*" />
+      </div>
+      <div>
+        <span>自定义中点:</span>
+        <input type="file" id="fileInput2" accept="image/*" />
+      </div>
+      <!-- <div>
+        <span>Y轴位置:</span>
+        <el-input v-model="otherParams.yAxis" type="number" style="width: 100px" placeholder="Please input" />
+      </div>
+      <div>
+        <span>x轴宽度:</span>
+        <el-input v-model="otherParams.xAxisWidth" type="number" style="width: 100px" placeholder="Please input" />
+      </div> -->
+    </div>
     <!-- <img :src="dataImg" alt=""> -->
     <div id="exportAll" class="preview">
       <div v-for="(item, index1) in tableData" :key="index1">
         <div v-if="item.type != 'line'" class="data">
-          <div class="header">{{ item.header }}</div>
+          <div class="dataItem">{{ item.header }}</div>
           <div class="dataItems">
             <div v-for="(data, index) in item.data" :key="index" class="dataItem">
               <span>{{ data }}</span>
@@ -16,83 +47,25 @@
         </div>
       </div>
     </div>
-    <div class="bts">
-
-      <div>
-        <div class="bt">
-          <button class="btn btn-primary" @click="triggerFileInput">导入excel</button>
-          <input type="file" ref="fileInput" @change="handleFileUpload" accept=".xlsx, .xls" />
-        </div>
-      </div>
-      <div>
-        <div class="bt">
-          <button class="btn btn-primary btn-outline">自定义区间点</button>
-          <input type="file" ref="fileInput1" id="fileInput" accept="image/*" />
-        </div>
-      </div>
-      <div>
-        <div class="bt ">
-          <button class="btn btn-primary btn-outline">自定义中点</button>
-          <input type="file" ref="fileInput2" id="fileInput2" accept="image/*" />
-        </div>
-      </div>
-
-      <div class="exports">
-        <h5>导出为：</h5>
-        <div class="bts flex">
-          <button class="btn flex-1 mr-2" @click="saveAsImg">PNG</button>
-        <button class="btn flex-1 mr-2" @click="saveAsPdf">PDF</button>
-        <button class="btn flex-1" @click="saveAsTiff">Tiff</button>
-        </div>
-      </div>
-      <!-- <div>
-        <span>Y轴位置:</span>
-        <el-input v-model="otherParams.yAxis" type="number" style="width: 100px" placeholder="Please input" />
-      </div>
-      <div>
-        <span>x轴宽度:</span>
-        <el-input v-model="otherParams.xAxisWidth" type="number" style="width: 100px" placeholder="Please input" />
-      </div> -->
-    </div>
-    <img :src="dataImg" alt="">
-    <!-- <div :class="'EmptyUpload'+(!isEmptyUploadShow?' hideEmptyUpload':'')" >
-      <div class="upload bg-primary"  @dragover.prevent="onDragOver"
-    @drop.prevent="onDrop"  @click="triggerFileInput">
-          点击上传Excel文件
-          <br/>
-          或拖拽到此处
-      </div>
-    </div> -->
   </div>
 </template>
 
 <script lang="ts" setup>
-// import html2canvas from "html2canvas";
-import html2canvas from 'html2canvas-pro';
+import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import * as XLSX from 'xlsx'
 import { ref, onMounted } from "vue";
-import { generateUUID } from "../../utils";
+import { generateUUID } from "../../../utils";
 
-let isEmptyUploadShow = ref(true)
-const fileInput = ref(null as any)
-const triggerFileInput = () => {
-  fileInput.value.click()
-}
+definePageMeta({
+    // layout: 'default',
+    name: 'edit',
+  })
 
-const onDragOver = (event:any) => {
-  event.preventDefault()
-  // 可添加视觉反馈
-}
+const route = useRoute()
 
-const onDrop = (event:any) => {
-  event.preventDefault()
-  const files:any = event.dataTransfer.files
-  if (files.length) {
-    handleFileUpload({ target: { files } } as any)
-  }
-}
-
+console.log('params',route.params)
+console.log('query', route.query)
 const tableData = ref([
   // { header: "23", data: [], type: "data" },
   // { header: "223", data: ["1.002(1.000, 1.004)", "1.002(1.000, 1.004)"], type: "line" },
@@ -136,7 +109,7 @@ const handleFileUpload = async (event: Event) => {
   if (file) {
     const data = await file.arrayBuffer()
     const workbook = XLSX.read(data, { type: 'array' })
-    isEmptyUploadShow.value=false
+
     // 读取第一个工作表
     const firstSheetName:any = workbook.SheetNames[0]
     const worksheet:any = workbook.Sheets[firstSheetName]
@@ -195,30 +168,37 @@ const handleFileUpload = async (event: Event) => {
 //导出图片
 const saveAsImg = () => {
   let targetDom: any = document.getElementById("exportAll"); //原本需要截图的div
+  // console.log("🚀 ~ file: index.vue:33 ~ download ~ targetDom:", targetDom.clientWidth);
+  let clonedNode = targetDom.cloneNode(true); //复制一个
+  clonedNode.setAttribute("style", `width: ${targetDom.clientHeight};height: ${targetDom.clientWidth};`);
+  document.body.appendChild(clonedNode); //放到body后面
   // 转换成canvas
   html2canvas(targetDom, {
     allowTaint: true,
     taintTest: false
-  } as any).then(function (canvas:any) {
-    let imgData = canvas.toDataURL("image/png", 1.0);
-    dataImg.value=imgData
-    let save_link: any = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
-  save_link.href = imgData.replace("image/png", "image/octet-stream");
-  save_link.download =  new Date().getTime() + ".png";
+  } as any).then(function (canvas) {
+    let pageData = canvas.toDataURL("image/png", 1.0);
+    saveFile(pageData.replace("image/png", "image/octet-stream"), new Date().getTime() + ".png");
+    document.body.removeChild(clonedNode);
+  });
+};
+// 保存路径下载
+const saveFile = (data: any, filename: any) => {
+  let save_link: any = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+  save_link.href = data;
+  save_link.download = filename;
   document.body.appendChild(save_link);
   save_link.click();
   save_link.remove();
-  });
 };
-
 // 导出为pdf
 const saveAsPdf = () => {
   const element: any = document.getElementById("exportAll");
-  html2canvas(element).then((canvas:any) => {
+  html2canvas(element).then(canvas => {
     const pageData = canvas.toDataURL("image/png");
     const pdf = new jsPDF();
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
+    const imgWidth = 410; // A4 width in mm
+    const pageHeight = 497; // A4 height in mm
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     let heightLeft = imgHeight;
     let position = 0;
@@ -275,36 +255,11 @@ onMounted(() => {
   white-space: pre-wrap;
 }
 .home {
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  width: 100vw;
-  // height: 100vh;
-  background-color: #f5f5f5;
-  &>.bts {
+  .bts {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    width: 250px;
-    background-color: #fff;
-    padding-top: 50px;
-    padding: 50px 10px;
     & > div {
-      width: 100%;
-      margin-bottom: 10px;
-      .bt{
-        button{
-          width: 100%;
-        }
-        input{
-          display: none;
-        }
-      }
-    }
-    .exports{
-      .bts{
-        display: flex;
-      }
+      margin-right: 20px;
     }
     .el-button {
       height: 100%;
@@ -313,71 +268,32 @@ onMounted(() => {
   }
   .preview {
     display: flex;
-    flex: 1;
     .data {
       display: flex;
       flex-direction: column;
-      // height: 100%;
+      height: 100%;
       margin: 0 10px;
       .dataItems {
         display: flex;
         flex-direction: column;
         height: calc(100% - 40px);
-        .dataItem {
+        & > .dataItem {
           display: flex;
           align-items: center;
           height: 20px;
           font-size: 12px;
-          span {
-          display: inline-block;
-        }
         }
       }
-      .header {
+      & > .dataItem {
         display: flex;
         align-items: center;
         height: 40px;
         line-height: 1;
+        span {
+          display: inline-block;
+        }
       }
     }
   }
-  .EmptyUpload{
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  width: 100vw;
-  height: 100vh;
-  left: 0;
-  top: 0;
-  background-color: #ffffff;
-  .upload{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 400px;
-    height: 300px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 32px;
-    color: #ffffff;
-    text-align: center;
-  }
-}
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    display: none;
-  }
-}
-.hideEmptyUpload{
-animation: fadeOut .3s ease-in-out forwards;
-}
 }
 </style>
