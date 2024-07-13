@@ -12,6 +12,7 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
+    "@img/sharp-wasm32": "^0.33.4",
     "@nuxt/eslint": "^0.3.13",
     "@nuxthub/core": "^0.7.0",
     "d3": "^7.9.0",
