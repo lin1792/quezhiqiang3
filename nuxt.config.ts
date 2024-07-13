@@ -20,6 +20,16 @@ export default defineNuxtConfig({
     './assets/css/element.scss',
     './assets/css/common.scss'
   ],
+  build: {
+    transpile: ['sharp'],
+    extend(config, ctx) {
+      if (ctx.isServer) {
+        config.externals = {
+          sharp: 'commonjs sharp'
+        };
+      }
+    }
+  },
   hub: {
     database: true,
     kv: true,
