@@ -16,7 +16,7 @@ export default eventHandler(async (event) => {
 
   // 设置响应头，通知浏览器这是一个文件下载
   setHeaders(event, {
-    'Content-Disposition': 'attachment; filename="image.tiff"',
+    'Content-Disposition': `attachment; filename=${new Date().getTime() }".tiff"`,
     'Content-Type': 'image/tiff',
     'Content-Length': tiffBuffer.length
   })

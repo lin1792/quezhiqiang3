@@ -12,9 +12,14 @@ export default defineNuxtConfig({
   modules: [
     '@nuxthub/core',
     '@nuxt/eslint',
-    '@nuxtjs/tailwindcss',
+    // '@nuxtjs/tailwindcss',
+    '@element-plus/nuxt'
   ],
-
+  css: [
+    './assets/css/reset.scss',
+    './assets/css/element.scss',
+    './assets/css/common.scss'
+  ],
   hub: {
     database: true,
     kv: true,

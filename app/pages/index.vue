@@ -1,13 +1,17 @@
 <template>
-  <div class="home card">
-    <!-- <img :src="dataImg" alt=""> -->
-    <div id="exportAll" class="preview">
+  <div class="home">
+     <div class="left">
+      <div class="content">
+        <div id="exportAll" class="preview">
       <div v-for="(item, index1) in tableData" :key="index1">
         <div v-if="item.type != 'line'" class="data">
           <div class="header">{{ item.header }}</div>
           <div class="dataItems">
-            <div v-for="(data, index) in item.data" :key="index" class="dataItem">
-              <span>{{ data }}</span>
+            <div v-for="(data, index) in item.data" :key="index" class="dataItem" :style="{  display: 'flex',
+          alignItems: 'center',
+          height:'20px',
+          fontSize: '12px'}">
+              <span style="display: inline-block;white-space: pre;">{{ data }}</span>
             </div>
           </div>
         </div>
@@ -15,54 +19,80 @@
           <ForestPlot ref="ForestPlotRef" :picData="item" :otherParams="otherParams" />
         </div>
       </div>
+      </div>
     </div>
-    <div class="bts">
-
+     </div>
+    <div class="operation">
       <div>
-        <div class="bt">
-          <button class="btn btn-primary" @click="triggerFileInput">导入excel</button>
-          <input type="file" ref="fileInput" @change="handleFileUpload" accept=".xlsx, .xls" />
-        </div>
+      <el-text class="mx-1" type="primary" style="cursor: pointer;" @click="isEmptyUploadShow=true">返回</el-text>
       </div>
       <div>
         <div class="bt">
-          <button class="btn btn-primary btn-outline">自定义区间点</button>
+          <el-button type="primary" plain @click="triggerFileInput">导入excel</el-button>
+          <input type="file" ref="fileInput" @change="handleFileUpload"  accept=".xlsx, .xls" />
+        </div>
+      </div>
+      <el-divider>区间点设置</el-divider>
+      <div>
+        <div class="bt">
+            <div class="iconBox">
+              <div v-for="(item,index) in iconList" :key="index"  class="icon" @click="changeRangeDotImg(item)">
+                <img :src="item" alt="">
+              </div>
+            </div>
+          <el-button  @click="triggerFileInput1">自定义区间点图标</el-button>
+          <div class="size" style="width: 100%;">
+            <span>大小:</span>
+            <el-input-number v-model="otherParams.rangeDotImgSize" :step="1" :min="2" size="small"/>
+          </div>
           <input type="file" ref="fileInput1" id="fileInput" accept="image/*" />
         </div>
       </div>
+      <el-divider>中点设置</el-divider>
       <div>
         <div class="bt ">
-          <button class="btn btn-primary btn-outline">自定义中点</button>
+          <div class="iconBox">
+              <div v-for="(item,index) in iconList" :key="index"  class="icon" @click="changeCenterDotImg(item)">
+                <img :src="item" alt="">
+              </div>
+          </div>
+          <el-button  @click="triggerFileInput2">自定义中点图标</el-button>
+          <div class="size" style="width: 100%;">
+            <span>大小:</span>
+            <el-input-number v-model="otherParams.centerDotImgSize" :step="1" :min="2" size="small"/>
+          </div>
           <input type="file" ref="fileInput2" id="fileInput2" accept="image/*" />
         </div>
       </div>
-
+      <el-divider>坐标轴设置</el-divider>
+      <div class="size">
+        <span>Y轴位置:</span>
+        <el-input-number v-model="otherParams.yAxis" :precision="2" :step="0.1" :max="10" size="small"/>
+      </div>
+      <div class="size">
+        <span>x轴宽度:</span>
+        <el-input-number v-model="otherParams.xAxisWidth" :step="1" :min="2" size="small"/>
+      </div>
+      <el-divider>导出</el-divider>
       <div class="exports">
         <h5>导出为：</h5>
-        <div class="bts flex">
-          <button class="btn flex-1 mr-2" @click="saveAsImg">PNG</button>
-        <button class="btn flex-1 mr-2" @click="saveAsPdf">PDF</button>
-        <button class="btn flex-1" @click="saveAsTiff">Tiff</button>
+        <div class="bts">
+          <el-button class="btn flex-1 mr-2" @click="saveAsImg">PNG</el-button>
+          <el-button class="btn flex-1 mr-2" @click="saveAsPdf">PDF</el-button>
+          <el-button class="btn flex-1" @click="saveAsTiff">Tiff</el-button>
         </div>
       </div>
-      <!-- <div>
-        <span>Y轴位置:</span>
-        <el-input v-model="otherParams.yAxis" type="number" style="width: 100px" placeholder="Please input" />
-      </div>
-      <div>
-        <span>x轴宽度:</span>
-        <el-input v-model="otherParams.xAxisWidth" type="number" style="width: 100px" placeholder="Please input" />
-      </div> -->
     </div>
-    <img :src="dataImg" alt="">
-    <!-- <div :class="'EmptyUpload'+(!isEmptyUploadShow?' hideEmptyUpload':'')" >
-      <div class="upload bg-primary"  @dragover.prevent="onDragOver"
+    <!-- <img :src="dataImg" alt=""> -->
+    <div :class="'EmptyUpload'+(!isEmptyUploadShow?' hideEmptyUpload':'')" >
+      <div class="upload"  @dragover.prevent="onDragOver"
     @drop.prevent="onDrop"  @click="triggerFileInput">
           点击上传Excel文件
           <br/>
           或拖拽到此处
       </div>
-    </div> -->
+      <IntroduceCard></IntroduceCard>
+    </div>
   </div>
 </template>
 
@@ -73,13 +103,26 @@ import { jsPDF } from "jspdf";
 import * as XLSX from 'xlsx'
 import { ref, onMounted } from "vue";
 import { generateUUID } from "../../utils";
+import shuxian from "@/assets/icons/shuxian.svg";
+import sanjiaoxing from "@/assets/icons/sanjiaoxing.svg";
+import zhengfangxing from "@/assets/icons/zhengfangxing.svg";
+import lingxing from "@/assets/icons/lingxing.svg";
+import yuanxing from "@/assets/icons/yuanxing.svg";
 
+const iconList=[shuxian,sanjiaoxing,zhengfangxing,lingxing,yuanxing]
 let isEmptyUploadShow = ref(true)
 const fileInput = ref(null as any)
 const triggerFileInput = () => {
   fileInput.value.click()
 }
-
+const fileInput1 = ref(null as any)
+const triggerFileInput1 = () => {
+  fileInput1.value.click()
+}
+const fileInput2 = ref(null as any)
+const triggerFileInput2 = () => {
+  fileInput2.value.click()
+}
 const onDragOver = (event:any) => {
   event.preventDefault()
   // 可添加视觉反馈
@@ -100,18 +143,52 @@ const tableData = ref([
 ] as any);
 const ForestPlotRef = ref(null as any);
 let otherParams = ref({
-  rangeDotImg: "",
-  centerDotImg: "",
+  rangeDotImg: shuxian,
+  rangeDotImgSize:10,
+  centerDotImg: yuanxing,
+  centerDotImgSize: 12,
   yAxis: 1,
   xAxisWidth: 200
 } as any);
-let dataImg=ref(null as any)
+let dataImg = ref(null as any)
+const changeRangeDotImg = (url:any) => {
+  console.log(url);
+  fetch(url)
+    .then((response) => response.blob())
+    .then((blob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }).then((res: any) => {
+      console.log(res);
+      otherParams.value.rangeDotImg = res;
+    })
+}
+const changeCenterDotImg = (url:any) => {
+  console.log(url);
+  fetch(url)
+    .then((response) => response.blob())
+    .then((blob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }).then((res: any) => {
+      console.log(res);
+      otherParams.value.centerDotImg = res;
+    })
+}
 const handleFileSelect = (event: any) => {
   const file = event.target.files[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = function (e: any) {
-      console.log(e.target.result);
+      console.log('11111111',e.target.result);
       otherParams.value.rangeDotImg = e.target.result;
     };
     reader.readAsDataURL(file);
@@ -131,12 +208,19 @@ const handleFileSelect2 = (event: any) => {
 
 //导入excel
 const handleFileUpload = async (event: Event) => {
+ // 重置文件输入的值
+ const input:any = event.target;
+  isEmptyUploadShow.value = false;
+
+  // 确保下一次选择同样的文件也会触发
+  setTimeout(() => {
+    input.value = '';
+  }, 0);
   const target = event.target as HTMLInputElement
   const file = target.files ? target.files[0] : null
   if (file) {
     const data = await file.arrayBuffer()
     const workbook = XLSX.read(data, { type: 'array' })
-    isEmptyUploadShow.value=false
     // 读取第一个工作表
     const firstSheetName:any = workbook.SheetNames[0]
     const worksheet:any = workbook.Sheets[firstSheetName]
@@ -196,7 +280,9 @@ const handleFileUpload = async (event: Event) => {
 const saveAsImg = () => {
   let element: any = document.getElementById("exportAll"); //原本需要截图的div
   // 转换成canvas
-  html2canvas(element).then((canvas:any) =>{
+  html2canvas(element, {
+    scale: 3, // 处理模糊问题
+  }).then((canvas:any) =>{
     let imgData = canvas.toDataURL("image/png");
     dataImg.value=imgData
     let save_link: any = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
@@ -211,7 +297,9 @@ const saveAsImg = () => {
 // 导出为pdf
 const saveAsPdf = () => {
   const element: any = document.getElementById("exportAll");
-  html2canvas(element).then((canvas:any) => {
+  html2canvas(element, {
+    scale: 2, // 处理模糊问题
+  }).then((canvas:any) => {
     const pageData = canvas.toDataURL("image/png");
     const pdf = new jsPDF();
     const imgWidth = 210; // A4 width in mm
@@ -219,10 +307,8 @@ const saveAsPdf = () => {
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     let heightLeft = imgHeight;
     let position = 0;
-
     pdf.addImage(pageData, "PNG", 0, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
-
     while (heightLeft >= 0) {
       position = heightLeft - imgHeight;
       pdf.addPage();
@@ -230,15 +316,17 @@ const saveAsPdf = () => {
       heightLeft -= pageHeight;
     }
 
-    pdf.save("content.pdf");
+    pdf.save(new Date().getTime() +".pdf");
   });
 };
 //导出为tiff
 const saveAsTiff = async () => {
   const element: any = document.getElementById("exportAll");
 // 使用 html2canvas 将元素转换为 canvas
-const canvas = await html2canvas(element)
-  const imgData = canvas.toDataURL('image/png')
+ await html2canvas(element, {
+    scale: 3, // 处理模糊问题
+  }).then(async (canvas: any) => {
+    const imgData = canvas.toDataURL('image/png')
     dataImg.value=imgData
     // 发送图像数据到服务器端 API
   await $fetch('/api/generate-tiff', {
@@ -247,74 +335,151 @@ const canvas = await html2canvas(element)
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ imageData: imgData })
-    }).then(async (res:any) =>{
+  }).then(async (res: any) => {
+      console.log(res);
       const blob =  res
     const url = URL.createObjectURL(blob)
     // 创建下载链接
     const link = document.createElement('a')
     link.href = url
-    link.download = 'download.tiff'
+    link.download = new Date().getTime() +'.tiff'
     link.click()
 
     // 释放 URL 对象
     URL.revokeObjectURL(url)
     })
+})
+
 };
 
 onMounted(() => {
   document.getElementById("fileInput")!.addEventListener("change", handleFileSelect, false);
   document.getElementById("fileInput2")!.addEventListener("change", handleFileSelect2, false);
+    fetch(shuxian)
+    .then((response) => response.blob())
+    .then((blob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }).then((res: any) => {
+      console.log(res);
+      otherParams.value.rangeDotImg = res;
+    })
+    fetch(yuanxing)
+    .then((response) => response.blob())
+    .then((blob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }).then((res: any) => {
+      console.log(res);
+      otherParams.value.centerDotImg = res;
+    })
 });
 </script>
 
 <style scoped lang="scss">
 * {
-  white-space: pre-wrap;
+  white-space: pre;
+  box-sizing: border-box;
+}
+:deep(.el-divider){
+  margin-top: 50px;
+  .el-divider__text.is-center{
+    transform: translateX(-50%) translateY(-100%);
+  }
 }
 .home {
   display: flex;
   flex-direction: row;
   position: relative;
-  width: 100vw;
-  // height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: #f5f5f5;
-  &>.bts {
+  &>.operation {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 250px;
+    width: 300px;
     background-color: #fff;
-    padding-top: 50px;
-    padding: 50px 10px;
+    padding: 0 30px 50px;
+    border-left: 1px solid #ccc;
     & > div {
       width: 100%;
       margin-bottom: 10px;
+      padding: 10px 0;
       .bt{
-        button{
+        // display: flex;
+        .iconBox{
+          display: flex;
           width: 100%;
+          margin: 0 0 10px 0;
+          flex-wrap: wrap;
+          .icon{
+          // width: 20px;
+          // height: 20px;
+          cursor: pointer;
+          border: 1px solid transparent;
+          margin-right: 10px;
+          padding: 4px;
+          img{
+            width: 20px;
+          }
+          .el-button {
+            width: 100px;
+          }
         }
+        .icon:hover{
+          border: 1px solid #ccc;
+        }
+        }
+        .el-button{
+          width: 200px;
+          margin: 0;
+        }
+
         input{
           display: none;
         }
       }
     }
+    .size{
+          display: flex;
+          align-items: center;
+          margin-top: 10px;
+          span{
+            margin-right: 10px;
+          }
+        }
     .exports{
+      h5{
+        margin: 0 0 10px 0;
+      }
       .bts{
         display: flex;
       }
     }
-    .el-button {
-      height: 100%;
-      margin-right: 20px;
-    }
   }
-  .preview {
+  .left{
     display: flex;
     flex: 1;
+    justify-content: center;
+  }
+  .preview {
+    padding:50px 20px 0 20px;
+    display: flex;
+    flex: 1;
+    width: auto;
     .data {
       display: flex;
       flex-direction: column;
-      // height: 100%;
+      height: 100%;
       margin: 0 10px;
       .dataItems {
         display: flex;
@@ -327,6 +492,7 @@ onMounted(() => {
           font-size: 12px;
           span {
           display: inline-block;
+          white-space: pre;
         }
         }
       }
@@ -343,25 +509,28 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-  width: 100vw;
-  height: 100vh;
+    justify-content: flex-end;
+  width: 100%;
+  min-width: 1200px;
+  height: 100%;
   left: 0;
   top: 0;
   background-color: #ffffff;
+  z-index: 10;
   .upload{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
-    width: 400px;
+    width: 500px;
     height: 300px;
     border-radius: 20px;
     cursor: pointer;
     font-size: 32px;
     color: #ffffff;
     text-align: center;
+    background-color: #409eff;
   }
 }
 @keyframes fadeOut {
@@ -374,7 +543,7 @@ onMounted(() => {
   }
 }
 .hideEmptyUpload{
-animation: fadeOut .3s ease-in-out forwards;
+animation: fadeOut .5s ease-in-out forwards;
 }
 }
 </style>

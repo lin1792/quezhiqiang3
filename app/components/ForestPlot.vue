@@ -25,7 +25,7 @@ let max = ref(0 as any);
 
 const drawChart = () => {
   // 定义图表的宽度和高度
-  const margin = { top: 40, right: 20, bottom: 20, left: 20 },
+  const margin = { top: 40, right: 20, bottom: 0, left: 20 },
     width = Number(props.otherParams.xAxisWidth),
     height = data.value.length * 20 + margin.top + margin.bottom;
 
@@ -91,10 +91,10 @@ const drawChart = () => {
       .enter()
       .append("image")
       .attr("class", "point1")
-      .attr("x", (d: any) => x(d.ci[0]) - 5) // 调整位置使图片居中
-      .attr("y", (d: any) => y(d.id) + y.bandwidth() / 2 - 5) // 调整位置使图片居中
-      .attr("width", (d: any) => (d.ci[0] ? 10 : 0)) // 设置图片宽度
-      .attr("height", 10) // 设置图片高度
+      .attr("x", (d: any) => x(d.ci[0]) - props.otherParams.rangeDotImgSize/2) // 调整位置使图片居中
+      .attr("y", (d: any) => y(d.id) + y.bandwidth() / 2 - props.otherParams.rangeDotImgSize/2) // 调整位置使图片居中
+      .attr("width", (d: any) => (d.ci[0] ? props.otherParams.rangeDotImgSize : 0)) // 设置图片宽度
+      .attr("height", props.otherParams.rangeDotImgSize) // 设置图片高度
       .attr("xlink:href", props.otherParams.rangeDotImg); // 自定义图片路径
     svg
       .selectAll(".point2")
@@ -102,10 +102,10 @@ const drawChart = () => {
       .enter()
       .append("image")
       .attr("class", "point2")
-      .attr("x", (d: any) => x(d.ci[1]) - 5) // 调整位置使图片居中
-      .attr("y", (d: any) => y(d.id) + y.bandwidth() / 2 - 5) // 调整位置使图片居中
-      .attr("width", (d: any) => (d.ci[1] ? 10 : 0)) // 设置图片宽度
-      .attr("height", 10) // 设置图片高度
+      .attr("x", (d: any) => x(d.ci[1]) - props.otherParams.rangeDotImgSize/2) // 调整位置使图片居中
+      .attr("y", (d: any) => y(d.id) + y.bandwidth() / 2 - props.otherParams.rangeDotImgSize/2) // 调整位置使图片居中
+      .attr("width", (d: any) => (d.ci[1] ? props.otherParams.rangeDotImgSize : 0)) // 设置图片宽度
+      .attr("height", props.otherParams.rangeDotImgSize) // 设置图片高度
       .attr("xlink:href", props.otherParams.rangeDotImg); // 自定义图片路径
   } else {
     //默认点
@@ -155,10 +155,10 @@ const drawChart = () => {
       .enter()
       .append("image")
       .attr("class", "point3")
-      .attr("x", (d: any) => x(d.pointEstimate) - 10) // 调整位置使图片居中
-      .attr("y", (d: any) => y(d.id) + y.bandwidth() / 2 - 10) // 调整位置使图片居中
-      .attr("width", (d: any) => (d.pointEstimate ? 20 : 0)) // 设置图片宽度
-      .attr("height", 20) // 设置图片高度
+      .attr("x", (d: any) => x(d.pointEstimate) - props.otherParams.centerDotImgSize/2) // 调整位置使图片居中
+      .attr("y", (d: any) => y(d.id) + y.bandwidth() / 2 - props.otherParams.centerDotImgSize/2) // 调整位置使图片居中
+      .attr("width", (d: any) => (d.pointEstimate ? props.otherParams.centerDotImgSize : 0)) // 设置图片宽度
+      .attr("height", props.otherParams.centerDotImgSize) // 设置图片高度
       .attr("xlink:href", props.otherParams.centerDotImg); // 自定义图片路径
   } else {
     // 绘制点估计
