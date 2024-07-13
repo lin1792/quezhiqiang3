@@ -386,7 +386,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 * {
-  white-space: pre;
   box-sizing: border-box;
 }
 :deep(.el-divider){
