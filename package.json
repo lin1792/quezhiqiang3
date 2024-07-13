@@ -19,7 +19,7 @@
     "html2canvas-pro": "^1.5.5",
     "jspdf": "^2.5.1",
     "nuxt": "^3.12.2",
-    "sharp": "^0.33.4",
+    "sharp": "^0.32.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
