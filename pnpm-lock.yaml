@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@img/sharp-wasm32':
-    specifier: ^0.33.4
-    version: 0.33.4
   '@nuxt/eslint':
     specifier: ^0.3.13
     version: 0.3.13(eslint@9.6.0)(typescript@5.5.3)(vite@5.3.3)
@@ -567,6 +564,7 @@ packages:
     requiresBuild: true
     dependencies:
       tslib: 2.6.3
+    optional: true
 
   /@es-joy/jsdoccomment@0.46.0:
     resolution: {integrity: sha512-C3Axuq1xd/9VqFZpW4YAzOx5O9q/LP46uIQy/iNDpHG3fmPa6TBtvfglMCs3RBiBxAIi0Go97r8+jvTt55XMyQ==}
@@ -1688,6 +1686,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@emnapi/runtime': 1.2.0
+    optional: true
 
   /@img/sharp-win32-ia32@0.33.4:
     resolution: {integrity: sha512-99SJ91XzUhYHbx7uhK3+9Lf7+LjwMGQZMDlO/E/YVJ7Nc3lyDFZPGhjwiYdctoH2BOzW9+TnfqcaMKt0jHLdqw==}
