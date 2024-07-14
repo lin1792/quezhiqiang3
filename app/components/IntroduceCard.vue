@@ -18,7 +18,7 @@
     <div class="card">
       <img src="@/assets/images/introduce4.png" alt="">
       <h3>个性化定制</h3>
-      <p>支持图表的颜色、字体、样式等个性化定制，满足用户对图表外观的个性化需求。</p>
+      <p>支持图表的图标个性化定制，满足用户对图表外观的个性化需求。</p>
     </div>
   </div>
 </template>
@@ -28,14 +28,16 @@
 <style lang="scss" scoped>
 .IntroduceCard{
   display: flex;
-margin:100px 0 40px 0 ;
+margin:0 0 40px 0 ;
+width: 1200px;
 .card{
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 300px;
+  // width: 300px;
   // height: 300px;
-  margin-right: 60px;
+  margin-right: 30px;
+  flex: 1;
   padding: 0;
   border: 0;
   box-shadow: none;

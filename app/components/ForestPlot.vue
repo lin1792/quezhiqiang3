@@ -44,7 +44,7 @@ const drawChart = () => {
   // 定义 x 轴和 y 轴的比例尺
   const x: any = d3
     .scaleLinear()
-    .domain([min.value, max.value])
+    .domain([props.otherParams.yAxis<min.value?props.otherParams.yAxis:min.value, props.otherParams.yAxis>max.value?props.otherParams.yAxis:max.value])
     .range([0, Number(props.otherParams.xAxisWidth)]);
   const y: any = d3
     .scaleBand()
@@ -208,8 +208,8 @@ watch(
       }
     });
     // 固定坐标必须有0,1
-    max.value < 1 ? (max.value = 1) : "";
-    min.value > 0 ? (min.value = 0) : "";
+    // max.value < 1 ? (max.value = 1) : "";
+    // min.value > 0 ? (min.value = 0) : "";
     console.log(min.value, max.value);
 
     drawChart();

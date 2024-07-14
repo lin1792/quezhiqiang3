@@ -67,7 +67,7 @@
       <el-divider>坐标轴设置</el-divider>
       <div class="size">
         <span>Y轴位置:</span>
-        <el-input-number v-model="otherParams.yAxis" :precision="2" :step="0.1" :max="10" size="small"/>
+        <el-input-number v-model="otherParams.yAxis" :precision="2" :step="0.1" size="small"/>
       </div>
       <div class="size">
         <span>x轴宽度:</span>
@@ -85,6 +85,7 @@
     </div>
     <!-- <img :src="dataImg" alt=""> -->
     <div :class="'EmptyUpload'+(!isEmptyUploadShow?' hideEmptyUpload':'')" >
+      <IntroduceHeader></IntroduceHeader>
       <div class="upload"  @dragover.prevent="onDragOver"
     @drop.prevent="onDrop"  @click="triggerFileInput">
           点击上传Excel文件
@@ -468,9 +469,9 @@ onMounted(() => {
   .left{
     display: flex;
     flex: 1;
-    justify-content: center;
-  }
-  .preview {
+    // justify-content: center;
+    overflow: scroll;
+    .preview {
     padding:50px 20px 0 20px;
     display: flex;
     flex: 1;
@@ -503,12 +504,13 @@ onMounted(() => {
       }
     }
   }
+  }
   .EmptyUpload{
     position: absolute;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
   width: 100%;
   min-width: 1200px;
   height: 100%;
