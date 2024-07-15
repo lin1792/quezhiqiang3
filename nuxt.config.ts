@@ -9,6 +9,9 @@ export default defineNuxtConfig({
   // },
   // Nuxt Modules
   // https://nuxt.com/modules
+  generate: {
+    fallback: true // 如果找不到页面，返回index.html
+  },
   modules: [
     '@nuxthub/core',
     '@nuxt/eslint',
